@@ -2,10 +2,11 @@
 
 import { useState, useEffect, use } from "react";
 import axios from "axios";
+import Select from 'react-select';
 import Info from "./info";
 
 const Menu = () => {
-    const [selectedCountry, setSelectedCountry] = useState([]);
+    const [selectedCountry, setSelectedCountry] = useState(null);
     const [countryNames, setCountryNames] = useState([]);
 
     useEffect(() => {
@@ -20,15 +21,28 @@ const Menu = () => {
 
     return (
         <div>
-            {countryNames.map((country, index) => (
-                <div key={index}>
-                    {country.name.common}
-                    </div>
-            ))};
+
+            <Select
+                className="basic-single"
+                classNamePrefix="select"
+                isClearable={true}
+                isSearchable={true}
+                name="Country"
+                options={countryNames.map((country) => ({
+                    value: country.name,
+                    label: country.name.common
+                }))}
+                onChange={(selected)=>setSelectedCountry(selected)}
+                />
+
+                <p>
+                Selected: {selectedCountry?.value?.common || "No country selected"}
+                </p> 
+
         </div>
     );
 };
 
 export default Menu
 
-//< Info country={selectedCountry}/>
+//  {selectedCountry && <Info country={selectedCountry.value} />}

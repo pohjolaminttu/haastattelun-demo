@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const Info = (country) => {
+const Info = ({country}) => {
     const [infos, setInfos] = useState([]);
     useEffect(() => {
         console.log('Effect for axios')
