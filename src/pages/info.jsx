@@ -1,6 +1,6 @@
 /*Sivu, jolla näytetään tilamuuttujassa olevan maan infot (jotka haetaan palvelimelta)
-Näkymässä on otsikkona maan nimi (sekä lyhennetty että virallinen) sekä maan pääkaupunki.
-Tämän alla on kaksi taulukkoa, jotka renderöidään mikäli niihin tulee sisältöä: maan natiivit nimet sekä maan valuutat
+Näkymässä on otsikkona maan nimi (sekä lyhennetty että virallinen) sekä maan pääkaupunki ja maanosa.
+Tämän alla on laatikoita, joissa lisää tietoa: puhutut kielet, valuutat ja toisesta API:sta haetut säätiedot
 */
 
 import { useState, useEffect } from "react";
