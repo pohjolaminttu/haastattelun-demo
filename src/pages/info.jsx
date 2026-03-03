@@ -18,7 +18,7 @@ const Info = () => {
         if (selectedCountry?.common) {
             /**Hakee tiedot vain siltä maalta, jonka "name" olio vastaa Info:lle välitettyä nameoliota */
             axios
-                .get(`https://restcountries.com/v3.1/name/${selectedCountry.common}?fullText=true`)
+                .get(`https://restcountries.com/v3.1/name/${selectedCountry.common}?fullText=true&fields=name,capital,currencies,flags,region`)
                 .then(response => {
                     console.log("Promise fulfilled :)")
                     console.log("Palvelimen vastaus (olio):", response.data);
@@ -34,11 +34,19 @@ const Info = () => {
             {infos?.map(country => (
                 <div key={country.name.official}>
                     <h1>{country.name.common}</h1>
+                    {country.flags && (<img
+                        src={country.flags.svg}
+                        className="inline w-40 h-auto" />
+                    )}
                     <h2><span className="text-style: italic text-[#808080]">Official name:</span> {country.name.official}</h2>
                     <h3><span className="text-style: italic text-[#808080]">Capital: </span>{country.capital}</h3>
+                    <h3><span className="text-style: italic text-[#808080]">Region: </span>{country.region}</h3>
                     <br />
 
-                    {/**Lisätään maiden natiivin kieliset nimet taulukkona, mikäli maalla niitä on */}
+                    {/**Lisätään maiden natiivin kieliset nimet taulukkona, mikäli maalla niitä on 
+                     * Tuntuu vähän ylimääräseltä tiedolta, ei niin relevanssi. Joko pois, tai sit vois laittaa napin alle, että "näytä natiivinimet"
+                     * Ja ehkä sit muitaki tietoja nappien alle, jotta yleisasu ois siistimpi
+                    */}
                     {country.name.nativeName && Object?.keys(country.name.nativeName).length > 0 && (
                         <>
                             <p className="text-style: italic">Native names:</p>
@@ -60,10 +68,10 @@ const Info = () => {
                                     ))}
                                 </tbody>
                             </table>
-                        </>)} <br/>
-                        
+                        </>)} <br />
+
                     {/**Lisätään maiden valuutat taulukkona. Osalla maista on useampi valuutta ja osalla ei ole määritelty lainkaan (esim Antarctica) */}
-                    {country.currencies && Object?.keys(country.currencies).length > 0  && (
+                    {country.currencies && Object?.keys(country.currencies).length > 0 && (
                         <>
                             <p className="text-style: italic">Currencies:</p>
                             <table className=" w-full text-center">
@@ -88,7 +96,7 @@ const Info = () => {
                 </div>
             ))}
             {/** Nappi josta siirrytään takaisin hakuvalikkoon*/}
-                <Button variant="outline-dark" onClick={() => navigate("/")}>Go back</Button>
+            <Button variant="outline-dark" onClick={() => navigate("/")}>Go back</Button>
         </div>
     );
 };
