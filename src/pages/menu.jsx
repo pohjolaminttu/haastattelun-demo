@@ -24,36 +24,40 @@ const Menu = () => {
 
     //Tapahtumankäsittelä napille. Huolehtii, ettei eteenpäin mennä ennen valintaa
     const moveToInfo = () => {
-        selectedCountry ? navigate("/info", {state: {country: selectedCountry?.value}})
-        : alert("Choose a country!")
+        selectedCountry ? navigate("/info", { state: { country: selectedCountry?.value } })
+            : alert("Choose a country!")
     }
 
     return (
-        <div>
-            {/** Alasvetovalikko, joka näyttää maiden common nimet listana. "Value" arvona pidetään koko nimiolio, jotta helppo etsiä oikea maa info-näkymässä.
+        <div className="grid place-items-center text-center w-screen">
+            <div className="bg-[#f2e3ff]">
+            <div className="mb-5">
+                {/** Alasvetovalikko, joka näyttää maiden common nimet listana. "Value" arvona pidetään koko nimiolio, jotta helppo etsiä oikea maa info-näkymässä.
              * Valikossa hakutoiminto, jolla voi hakea maan nimeä */}
-            <Select
-                className="basic-single"
-                classNamePrefix="select"
-                isClearable={true}
-                isSearchable={true}
-                name="Country"
-                options={countryNames.map((country) => ({
-                    value: country.name,
-                    label: country.name.common
-                }))}
-                onChange={(selected)=>setSelectedCountry(selected)}
+                <Select
+                    className="basic-single"
+                    classNamePrefix="select"
+                    isClearable={true}
+                    isSearchable={true}
+                    name="Country"
+                    options={countryNames.map((country) => ({
+                        value: country.name,
+                        label: country.name.common
+                    }))}
+                    onChange={(selected) => setSelectedCountry(selected)}
                 />
 
-                {/** Näytetään valittu maa alapuolella toistaiseksi*/}
+                {/** DEBUG käyttöön: Näytetään valittu maa alapuolella 
                 <p>
-                Selected: {selectedCountry?.value?.common || "No country selected"}
+                    Selected: {selectedCountry?.value?.common || "No country selected"}
                 </p> 
-
+                */}
+                </div>
                 {/** Nappi josta siirrytään infosivulle ja välitetään valittu maa samalla*/}
                 <Button variant="outline-dark" onClick={moveToInfo}>Search info</Button>
-
-        </div>
+            </div>
+            </div>
+            
     );
 };
 
