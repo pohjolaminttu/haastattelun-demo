@@ -10,7 +10,7 @@ const Info = () => {
     useEffect(() => {
         console.log('Effect for axios')
         if (selectedCountry?.common) {
-            {/**Hakee tiedot vain siltä maalta, jonka "name" olio vastaa Info:lle välitettyä oliota */}
+            /**Hakee tiedot vain siltä maalta, jonka "name" olio vastaa Info:lle välitettyä nameoliota */
             axios
                 .get(`https://restcountries.com/v3.1/name/${selectedCountry.common}?fullText=true`)
                 .then(response => {
@@ -19,15 +19,31 @@ const Info = () => {
                     setInfos(response.data);
                 })
                 .catch(err => console.log("Virhe haussa:", err));
-            }
-        }, [selectedCountry]);
+        }
+    }, [selectedCountry]);
 
 
-return (
-    <div>
-        <p>Tiedot (ei vielä nähtävillä)</p>
-    </div>
-);
+    return (
+        <div className="text-center">
+            {infos?.map(country => (
+                <div key={country.name.official}>
+                    <h1>{country.name.common}</h1>
+                    <h2><span className="text-style: italic text-[#808080]">Official name:</span> {country.name.official}</h2>
+                    <br />
+                    <p className="text-style: italic">Native names:</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th className="text-style: italic">Language code</th>
+                                <th className="text-style: italic">Common name</th>
+                                <th className="text-style: italic">Official name</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            ))}
+        </div>
+    );
 };
 
 export default Info

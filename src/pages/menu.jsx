@@ -1,16 +1,17 @@
 //Lähtötilanne, jossa valitaan maa (sekä ylläpidetään tilamuuttujana valittua maata) ja siirrytään sivulle /info
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router';
 import axios from "axios";
 import Select from 'react-select';
 import Button from 'react-bootstrap/Button';
 
 const Menu = () => {
-    const [selectedCountry, setSelectedCountry] = useState(null);
-    const [countryNames, setCountryNames] = useState([]);
+    const [selectedCountry, setSelectedCountry] = useState(null); //Valitun maan nimiolio tallennetaan tilamuuttujana, joka annetaan info-sivulle vertailtavaksi
+    const [countryNames, setCountryNames] = useState([]); //Otetaan palvelimelta tässä vaiheessa vasta maiden nimitiedot, jotta lataus on nopeampaa ja tehokkaampaa
     const navigate = useNavigate();
 
+    //Ja tässä siis haetaan nimioliot, jotka tallennetaan tilamuuttujaksi. Valittua maata voi siis vaihtaa monta kertaa, ja eteenpäin infosivulle mennään vasta "Hae" napista
     useEffect(() => {
         console.log('Effect for axios')
         axios
@@ -21,9 +22,16 @@ const Menu = () => {
             })
     }, []);
 
+    //Tapahtumankäsittelä napille. Huolehtii, ettei eteenpäin mennä ennen valintaa
+    const moveToInfo = () => {
+        selectedCountry ? navigate("/info", {state: {country: selectedCountry?.value}})
+        : alert("Choose a country!")
+    }
+
     return (
         <div>
-            {/** Alasvetovalikko, joka näyttää maiden common nimet listana. Hakutoiminto, jolla voi hakea maan nimeä */}
+            {/** Alasvetovalikko, joka näyttää maiden common nimet listana. "Value" arvona pidetään koko nimiolio, jotta helppo etsiä oikea maa info-näkymässä.
+             * Valikossa hakutoiminto, jolla voi hakea maan nimeä */}
             <Select
                 className="basic-single"
                 classNamePrefix="select"
@@ -43,7 +51,7 @@ const Menu = () => {
                 </p> 
 
                 {/** Nappi josta siirrytään infosivulle ja välitetään valittu maa samalla*/}
-                <Button variant="outline-dark" onClick={() => navigate("/info", {state: {country: selectedCountry?.value}})}>Get info</Button>
+                <Button variant="outline-dark" onClick={moveToInfo}>Get info</Button>
 
         </div>
     );
