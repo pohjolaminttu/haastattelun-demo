@@ -51,7 +51,7 @@ const Menu = () => {
                 </p> 
 
                 {/** Nappi josta siirrytään infosivulle ja välitetään valittu maa samalla*/}
-                <Button variant="outline-dark" onClick={moveToInfo}>Get info</Button>
+                <Button variant="outline-dark" onClick={moveToInfo}>Search info</Button>
 
         </div>
     );
