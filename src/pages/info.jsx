@@ -24,7 +24,7 @@ const Info = () => {
 
                 /**Hakee tiedot vain siltä maalta, jonka "name" olio vastaa Info:lle välitettyä nameoliota */
                 try {
-                    const countryInfo = await axios.get(`https://restcountries.com/v3.1/name/${selectedCountry.common}?fullText=true&fields=name,capital,currencies,flags,region,capitalInfo`);
+                    const countryInfo = await axios.get(`https://restcountries.com/v3.1/name/${selectedCountry.common}?fullText=true&fields=name,capital,currencies,flags,region,capitalInfo,languages`);
                     setInfos(countryInfo.data[0]);
 
                     /**Tallennetaan koordinaatit ja haetaan säätiedot eri API:lta */
@@ -34,8 +34,8 @@ const Info = () => {
                     console.log("Koordinaatit: ", lat, lon);
 
                     if (lat && lon) {
-                        const weather = await axios.get(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}&altitude=90`);
-                        setWeather(weather.data);
+                        const weatherResponse = await axios.get(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}&altitude=90`);
+                        setWeather(weatherResponse.data);
                     }
                 } catch (err) {
                     console.log("Virhe haussa:", err);
@@ -48,58 +48,92 @@ const Info = () => {
 
     console.log(weather);
 
-
     return (
-        <div className="text-center">
+        <div className="grid place-items-center text-center w-screen mx-auto">
             {infos ? (
-                <div>
-                    <h1>{infos.name.common}</h1>
-                    {infos.flags && (
-                        <img
-                            src={infos.flags.svg}
-                            className="inline w-40 h-auto"
-                            alt={infos.name.common} />)
-                    }
+                <div className="bg-[#ede8ff] p-5 rounded-2xl shadow-xl mb-5">
+                    <div className="flex gap-4 justify-between pb-5">
+                        {infos.flags && (
+                            <>
+                                <h1>{infos.name.common.toUpperCase()}</h1>
+                                <img
+                                    src={infos.flags.svg}
+                                    className="inline w-40 h-auto"
+                                    alt={infos.name.common} />
+                            </>)}
+                    </div>
 
                     <h2><span className="text-style: italic text-[#808080]">Official name:</span> {infos.name.official}</h2>
-                    <h3><span className="text-style: italic text-[#808080]">Capital: </span>{infos.capital}</h3>
-                    <h3><span className="text-style: italic text-[#808080]">Region: </span>{infos.region}</h3>
+                    <h2><span className="text-style: italic text-[#808080]">Capital: </span>{infos.capital}</h2>
+                    <h2><span className="text-style: italic text-[#808080]">Region: </span>{infos.region}</h2>
                     <br />
 
-                    {/**Lisätään maiden valuutat taulukkona. Osalla maista on useampi valuutta ja osalla ei ole määritelty lainkaan (esim Antarctica) */}
-                    {infos.currencies && Object?.keys(infos.currencies).length > 0 && (
-                        <>
-                            <p className="text-style: italic">Currencies:</p>
-                            <table className=" w-full text-center">
-                                <thead >
-                                    <tr>
-                                        <th className="text-style: italic">Currency short</th>
-                                        <th className="text-style: italic">Name</th>
-                                        <th className="text-style: italic">Symbol</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {Object.entries(infos?.currencies).map(([currencyCode, currencyData]) => (
-                                        <tr key={currencyCode}>
-                                            <td>{currencyCode}</td>
-                                            <td>{currencyData.name}</td>
-                                            <td>{currencyData.symbol}</td>
-                                        </tr>
+                    <div className="bg-[#d8cfff] p-2 mb-4 rounded-xl shadow-md">
+                        {infos.languages && Object?.keys(infos.languages).length > 0 && (
+                            <>
+                                <h3 className="text-style: italic">Languages:</h3>
+                                <div className="grid grid-cols-4 gap-2">
+                                    {Object.entries(infos?.languages).map(([short, name]) => (
+                                        <p key={short}>{name}</p>
                                     ))}
-                                </tbody>
-                            </table>
-                        </>)}
+                                </div>
+                            </>
+                        )}
+                    </div>
+
+
+                    <div className="bg-[#d8cfff] p-2 rounded-xl shadow-md">
+                        {/**Lisätään maiden valuutat taulukkona. Osalla maista on useampi valuutta ja osalla ei ole määritelty lainkaan (esim Antarctica) */}
+                        {infos.currencies && Object?.keys(infos.currencies).length > 0 && (
+                            <>
+                                <h3 className="text-style: italic">Currencies:</h3>
+                                <table className="w-full text-center">
+                                    <thead >
+                                        <tr>
+                                            <th>Short</th>
+                                            <th>Name</th>
+                                            <th>Symbol</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {Object.entries(infos?.currencies).map(([currencyCode, currencyData]) => (
+                                            <tr key={currencyCode}>
+                                                <td>{currencyCode}</td>
+                                                <td>{currencyData.name}</td>
+                                                <td>{currencyData.symbol}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+
+                            </>)}
+                    </div>
                     <br />
 
 
-                    <h2 className="text-style: italic">Weather</h2>
-            
-                    {/**ATM Ottaa siis vaa yksikön lol. Kaivappa sieltä se numero */}
-                    {weather?.properties?.meta?.units?.air_temperature &&
-                        <p>{weather.properties.meta.units.air_temperature}</p>}
+                    {/**Jotta sään reaaliaikaisuus tuntuisi, lisäsin "ledin" indikoimaan jatkuvaa päivitystä :D */}
+                    <div className="bg-[#d8cfff] p-2 rounded-xl shadow-md">
+                        <span className="inline-block w-3 h-3 bg-[#ff0000] rounded-2xl shadow-[0px_0px_6px_0px_rgba(255,0,0,0.4)] animate-[blink_1s_step-start_infinite]"></span>
+                        <h3 className="inline">{" "}Weather</h3>
 
+                        {weather?.properties?.timeseries?.length > 0 && (
+                            <p>
+                                Air temperature: {" "}
+                                {weather.properties.timeseries[0].data.instant.details.air_temperature}{" "}
+                                {weather.properties.meta.units.air_temperature}
+                                <br />
+                                Wind speed: {" "}
+                                {weather.properties.timeseries[0].data.instant.details.wind_speed}{" "}
+                                {weather.properties.meta.units.wind_speed}
+                                <br />
+                                Humidity: {" "}
+                                {weather.properties.timeseries[0].data.instant.details.relative_humidity}{" "}
+                                {weather.properties.meta.units.relative_humidity}
+                            </p>
+                        )}
+                    </div>
                 </div>
-            ):(null)};
+            ) : (null)}
 
 
             {/** Nappi josta siirrytään takaisin hakuvalikkoon*/}
@@ -110,34 +144,4 @@ const Info = () => {
 
 export default Info
 
-/**Jos jaksan nii voi laittaa nappien taakse asioita. Mut otin atm pois koska vähä random tieto
 
-    //Jotta sivu ei näyttäisi ruuhkaiselta, epäolennaisemmat ja taulukkomuotoiset tiedot avaataan napin painalluksella
-    const [showNativeNames, setShowNativeNames] = useState(false);
-    const [showCurrencies, setShowCurrencies] = useState(false);
-    const [showLanguages, setShowLanguages] = useState(false);
-    
-    NATIVE NAMES
-                    {country.name.nativeName && Object?.keys(country.name.nativeName).length > 0 && (
-                        <>
-                            <p className="text-style: italic">Native names:</p>
-                            <table className=" w-full text-center">
-                                <thead >
-                                    <tr>
-                                        <th className="text-style: italic">Language code</th>
-                                        <th className="text-style: italic">Common name</th>
-                                        <th className="text-style: italic">Official name</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {Object.entries(country.name?.nativeName).map(([langCode, native]) => (
-                                        <tr key={langCode}>
-                                            <td>{langCode}</td>
-                                            <td>{native.common}</td>
-                                            <td>{native.official}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </>)}
-    */

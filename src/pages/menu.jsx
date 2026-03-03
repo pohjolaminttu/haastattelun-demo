@@ -30,10 +30,11 @@ const Menu = () => {
 
     return (
         <div className="grid place-items-center text-center w-screen">
-            <div className="bg-[#f2e3ff]">
+            <div className="bg-[#f2e3ff] p-5 rounded-2xl shadow-xl">
             <div className="mb-5">
                 {/** Alasvetovalikko, joka näyttää maiden common nimet listana. "Value" arvona pidetään koko nimiolio, jotta helppo etsiä oikea maa info-näkymässä.
              * Valikossa hakutoiminto, jolla voi hakea maan nimeä */}
+                <h1>COUNTRIES INFO</h1><br/>
                 <Select
                     className="basic-single"
                     classNamePrefix="select"
